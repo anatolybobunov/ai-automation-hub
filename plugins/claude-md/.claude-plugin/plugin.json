@@ -1,0 +1,5 @@
+{
+  "name": "claude-md",
+  "description": "Commands for managing and updating CLAUDE.md instruction files",
+  "version": "1.0.0"
+}

@@ -1,0 +1,67 @@
+{
+  "name": "ai-automation-hub",
+  "owner": {
+    "name": "Anatoly Bobunov",
+    "email": "dev.bobunov@gmail.com"
+  },
+  "metadata": {
+    "description": "A collection of reusable plugins for Claude Code",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "commits",
+      "source": "./plugins/commits",
+      "description": "Git commit message generation commands",
+      "version": "1.0.0",
+      "author": {
+        "name": "Anatoly Bobunov"
+      }
+    },
+    {
+      "name": "python-agents",
+      "source": "./plugins/python-agents",
+      "description": "Developer automation tools and agents for Python development",
+      "version": "1.0.1",
+      "author": {
+        "name": "Anatoly Bobunov"
+      }
+    },
+    {
+      "name": "golang-agents",
+      "source": "./plugins/golang-agents",
+      "description": "Developer automation tools and agents for Go development",
+      "version": "1.0.0",
+      "author": {
+        "name": "Anatoly Bobunov"
+      }
+    },
+    {
+      "name": "pre-commit",
+      "source": "./plugins/pre-commit",
+      "description": "Automatically runs pre-commit checks after code changes",
+      "version": "1.0.0",
+      "author": {
+        "name": "Anatoly Bobunov"
+      }
+    },
+    {
+      "name": "review",
+      "source": "./plugins/review",
+      "description": "Code review commands for analyzing changes and commits",
+      "version": "1.0.0",
+      "author": {
+        "name": "Anatoly Bobunov"
+      }
+    },
+    {
+      "name": "claude-md",
+      "source": "./plugins/claude-md",
+      "description": "Commands for managing and updating CLAUDE.md instruction files",
+      "version": "1.0.0",
+      "author": {
+        "name": "Anatoly Bobunov"
+      }
+    }
+  ]
+}

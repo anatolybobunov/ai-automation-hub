@@ -1,0 +1,5 @@
+{
+  "name": "pre-commit",
+  "description": "Automatically runs pre-commit checks after code changes",
+  "version": "1.0.0"
+}

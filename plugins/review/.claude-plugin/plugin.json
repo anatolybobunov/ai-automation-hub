@@ -1,0 +1,5 @@
+{
+  "name": "review",
+  "description": "Code review commands for analyzing changes and commits",
+  "version": "1.0.0"
+}
