@@ -2,10 +2,7 @@
 description: "Auto-commit staged changes: analyze diff, generate commit message and execute git commit"
 allowed-tools:
   [
-    "Bash(git status:*)",
-    "Bash(git diff --staged:*)",
-    "Bash(git diff:*)",
-    "Bash(git commit -m:*)"
+    "Task(subagent_type=commit-writer:*)"
   ]
 ---
 
@@ -16,18 +13,42 @@ allowed-tools:
 - Current branch: !`git branch --show-current`
 
 ## Task
-You are an AI commit assistant.
 
-1. Identify the **staged changes**. If there are **no staged changes**, ask the user to “stage changes first” and stop.  
-2. Analyze the staged diff and understand what changed.  
-3. Generate a **high-quality commit message** that includes:
-   - A **subject line** in **imperative tense** (short summary)
-   - An optional **body** with brief points describing what was changed and why  
-   - Follow common **Conventional Commits** style where possible (feat, fix, docs, test, refactor, chore etc.).  
-4. Run `git commit -m "<generated message>"` using the chosen message.  
-5. Return only the output of the commit operation.
+Use the Task tool to invoke the commit-writer agent (haiku model) for fast commit message generation:
 
-## Constraints
-- Do **not** include any Claude signature, metadata or co-authored footers.  
-- If the diff is empty, instruct the user to stage changes first.
-- Use only English to write comments
+```
+Task(
+  subagent_type="commit-writer",
+  description="Generate and execute commit",
+  prompt="Analyze the following git context and generate a conventional commit message, then execute git commit.
+
+## Git Status
+<git_status>
+{status}
+</git_status>
+
+## Staged Diff
+<staged_diff>
+{staged_diff}
+</staged_diff>
+
+## Unstaged Diff
+<unstaged_diff>
+{unstaged_diff}
+</unstaged_diff>
+
+## Current Branch
+{branch}
+
+## Instructions
+1. If there are no staged changes, respond that user needs to stage changes first and stop.
+2. Analyze the staged diff to understand what changed.
+3. Generate a conventional commit message with:
+   - Subject line in imperative tense (feat, fix, docs, refactor, etc.)
+   - Optional body if changes need explanation
+4. Execute: git commit -m '<generated message>'
+5. Return the commit output."
+)
+```
+
+Replace placeholders with actual context values from above.

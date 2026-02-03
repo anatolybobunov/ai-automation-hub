@@ -2,13 +2,7 @@
 description: "Auto-commit staged changes and push current branch (handles first push)"
 allowed-tools:
   [
-    "Bash(git status:*)",
-    "Bash(git diff --staged:*)",
-    "Bash(git diff:*)",
-    "Bash(git branch --show-current:*)",
-    "Bash(git rev-parse --abbrev-ref --symbolic-full-name @{u}:*)",
-    "Bash(git commit -m:*)",
-    "Bash(git push:*)"
+    "Task(subagent_type=commit-writer:*)"
   ]
 ---
 
@@ -17,26 +11,51 @@ allowed-tools:
 - Staged diff: !`git diff --staged`
 - Unstaged diff: !`git diff`
 - Current branch: !`git branch --show-current`
-- Upstream branch (if exists): !`git rev-parse --abbrev-ref --symbolic-full-name @{u}`
+- Upstream branch (if exists): !`git rev-parse --abbrev-ref --symbolic-full-name @{u} 2>/dev/null || echo "no upstream"`
 
 ## Task
-You are an AI commit and push assistant.
 
-1. Identify the **staged changes**. If there are **no staged changes**, ask the user to “stage changes first” and stop.
-2. Analyze the staged diff and understand what changed.
-3. Generate a **high-quality commit message** that includes:
-   - A **subject line** in **imperative tense**
-   - An optional **body** with brief points describing what was changed and why
-   - Follow **Conventional Commits** style where possible (feat, fix, docs, test, refactor, chore, etc.).
-4. Run `git commit -m "<generated message>"`.
-5. Push the current branch:
-   - If an **upstream branch exists**, run `git push`.
-   - If **no upstream exists** (first push), run  
-     `git push -u origin <current-branch>`.
-6. Return only the output of the commit and push operations.
+Use the Task tool to invoke the commit-writer agent (haiku model) for fast commit and push:
 
-## Constraints
-- Do **not** include any Claude signature, metadata, or co-authored footers.
-- Do **not** stage files.
-- If the diff is empty, instruct the user to stage changes first.
-- Use only English to write comments
+```
+Task(
+  subagent_type="commit-writer",
+  description="Commit and push changes",
+  prompt="Analyze the following git context, generate a conventional commit message, execute git commit, then push.
+
+## Git Status
+<git_status>
+{status}
+</git_status>
+
+## Staged Diff
+<staged_diff>
+{staged_diff}
+</staged_diff>
+
+## Unstaged Diff
+<unstaged_diff>
+{unstaged_diff}
+</unstaged_diff>
+
+## Current Branch
+{branch}
+
+## Upstream Branch
+{upstream}
+
+## Instructions
+1. If there are no staged changes, respond that user needs to stage changes first and stop.
+2. Analyze the staged diff to understand what changed.
+3. Generate a conventional commit message with:
+   - Subject line in imperative tense (feat, fix, docs, refactor, etc.)
+   - Optional body if changes need explanation
+4. Execute: git commit -m '<generated message>'
+5. Push the branch:
+   - If upstream exists: git push
+   - If no upstream (first push): git push -u origin {branch}
+6. Return the commit and push output."
+)
+```
+
+Replace placeholders with actual context values from above.

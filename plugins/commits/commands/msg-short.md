@@ -2,9 +2,7 @@
 description: "Generate a short, compact git commit message for changes in the current branch"
 allowed-tools:
   [
-    "Bash(git status:*)",
-    "Bash(git diff --staged:*)",
-    "Bash(git diff:*)"
+    "Task(subagent_type=commit-writer:*)"
   ]
 ---
 
@@ -13,8 +11,34 @@ allowed-tools:
 - Diff of staged and unstaged changes: !`git diff --staged && git diff`
 
 ## Task
-Analyze the changes above and output a **single-line git commit message**:
-- Use imperative tense
-- Keep it short and informative
-- Do not run `git commit`, only generate the message
-- Use only English to write comments
+
+Use the Task tool to invoke the commit-writer agent (haiku model) for fast message generation:
+
+```
+Task(
+  subagent_type="commit-writer",
+  description="Generate short commit message",
+  prompt="Generate a single-line conventional commit message for the following changes.
+
+## Git Status
+<git_status>
+{status}
+</git_status>
+
+## Diff
+<diff>
+{diff}
+</diff>
+
+## Instructions
+1. Analyze the changes to understand what was modified.
+2. Generate a single-line commit message:
+   - Use imperative tense
+   - Follow format: type(scope): description
+   - Keep it short and informative (under 72 chars)
+3. Output ONLY the commit message, nothing else.
+4. Do NOT run git commit."
+)
+```
+
+Replace placeholders with actual context values from above.

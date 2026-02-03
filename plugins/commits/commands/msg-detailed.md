@@ -2,9 +2,7 @@
 description: "Generate a full detailed git commit message for changes in the current branch"
 allowed-tools:
   [
-    "Bash(git status:*)",
-    "Bash(git diff --staged:*)",
-    "Bash(git diff:*)"
+    "Task(subagent_type=commit-writer:*)"
   ]
 ---
 
@@ -13,24 +11,47 @@ allowed-tools:
 - Diff of staged and unstaged changes: !`git diff --staged && git diff`
 
 ## Task
-Analyze the changes above and output a **full git commit message** with these parts:
 
-1. **Subject line**
+Use the Task tool to invoke the commit-writer agent (haiku model) for detailed message generation:
+
+```
+Task(
+  subagent_type="commit-writer",
+  description="Generate detailed commit message",
+  prompt="Generate a full conventional commit message with body for the following changes.
+
+## Git Status
+<git_status>
+{status}
+</git_status>
+
+## Diff
+<diff>
+{diff}
+</diff>
+
+## Instructions
+1. Analyze the changes to understand what was modified.
+2. Generate a full commit message with:
+
+   **Subject line:**
    - Imperative tense
-   - Capitalized first word
-   - Brief summary (~50 chars max) of what has changed  [oai_citation:0‡Graphite](https://graphite.com/guides/git-commit-message-best-practices?utm_source=chatgpt.com)
+   - Capitalized first word after type
+   - Brief summary (~50 chars max)
+   - Format: type(scope): description
 
-2. **Blank line**
+   **Blank line**
 
-3. **Body description**
+   **Body description:**
    - Detailed explanation of what was changed
    - Why the change was necessary
    - Any important context or impact
-   - Wrap text at ~72 characters per line  [oai_citation:1‡Gist](https://gist.github.com/tonibardina/9290fbc7d605b4f86919426e614fe692?utm_source=chatgpt.com)
+   - Wrap text at ~72 characters per line
 
-## Constraints
-- Do **not** run `git commit`; only generate the commit message text.
-- Do **not** include any Claude signature, metadata, or co-authored footers.
-- Do **not** stage files.
-- If the diff is empty, instruct the user to stage changes first.
-- Use only English to write comments
+3. Output ONLY the commit message text, nothing else.
+4. Do NOT run git commit.
+5. Do NOT include any Claude signature, metadata, or co-authored footers."
+)
+```
+
+Replace placeholders with actual context values from above.
